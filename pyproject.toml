@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gitidentity-audit"
+version = "1.1.0"
+description = "Find personal e-mail addresses leaked in git history (authors, committers, co-authors, tag authors, machine-derived addresses) and in repo config. JSON output."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "TPOALOS"}]
+keywords = ["git", "privacy", "email-privacy", "audit"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+
+[project.urls]
+Homepage = "https://github.com/TPOALOS/gitidentity-audit"
+
+[project.scripts]
+gitidentity-audit = "gitidentity_audit:main"
+
+[tool.setuptools]
+py-modules = ["gitidentity_audit"]

@@ -19,6 +19,8 @@ python3 gitidentity_audit.py ~/projects
 python3 gitidentity_audit.py ./my-repo --allow-domain mycompany.com
 python3 gitidentity_audit.py ~/projects --replace-name "me" \
     --replace-email "12345+me@users.noreply.github.com"
+python3 gitidentity_audit.py ~/projects --json --fail-on-config
+# or: pip install git+https://github.com/TPOALOS/gitidentity-audit && gitidentity-audit ~/projects
 ```
 
 Example output:
@@ -26,11 +28,19 @@ Example output:
 ```
 OK   /home/me/projects/clean-repo
 LEAK /home/me/projects/old-repo
-     personal  author   Jane <jane@gmail.com>  (14 commit(s))
+     personal  author    Jane <jane@gmail.com>  (14 commit(s))
      personal  committer Jane <jane@gmail.com>  (14 commit(s))
+     personal  tagger    Jane <jane@gmail.com>  (2 commit(s))
+     machine   author    jane <jane@Janes-MacBook.local>  (3 commit(s))
+     config    new commits in this repo will use jane@gmail.com (personal)
 ```
 
-- `personal` = common consumer mail provider, `other` = any other non-noreply address.
+- `personal` = common consumer mail provider, `machine` = an address git built from the computer's name because
+  `user.email` was never set (`jane@Janes-MacBook.local`, `root@localhost`: it leaks the machine and account name),
+  `other` = any other non-noreply address.
+- Roles are `author`, `committer`, `co-author` (trailers) and `tagger` (annotated tags).
+- The `config` line shows the `user.email` git would use for the **next** commit in that repository. It is a warning and does not
+  change the exit code unless you pass `--fail-on-config`, which is handy in a pre-push hook or CI.
 - `--allow EMAIL` / `--allow-domain DOMAIN` mark addresses you accept (repeatable).
 - With `--replace-name/--replace-email` it prints `.mailmap` lines. A `.mailmap` only
   changes how tools display names locally; to remove an address from published history
